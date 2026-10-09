@@ -194,100 +194,55 @@
       <!-- Laser Scanning Visual Overlay -->
       <div class="laser-scanline"></div>
 
-      <!-- Centered Hazardous Waste Symbol (유해폐기물질 기호) -->
-      <div class="flex justify-center my-4">
-        <div id="lockIconWrapper" class="relative group cursor-pointer p-6 sm:p-8 rounded-3xl border-2 border-yellow-500/60 bg-slate-950/95 shadow-2xl shadow-yellow-950/60 transition-all duration-500 flex flex-col items-center">
-          <div class="absolute inset-0 bg-yellow-500/10 rounded-3xl blur-xl group-hover:bg-yellow-500/25 transition-all"></div>
-          
-          <!-- Extended Yellow/Amber Biohazard Symbol with Outward Radiating Lines -->
-          <svg id="biohazardSvg" class="w-36 h-36 sm:w-44 sm:h-44 relative z-10 transition-all duration-700 drop-shadow-[0_0_25px_rgba(250,204,21,0.85)]" viewBox="0 0 200 200">
-            <defs>
-              <!-- Precision Cutout Masks for Hollow Inner Spaces -->
-              <mask id="bio-leaf-cutout">
-                <rect x="0" y="0" width="200" height="200" fill="white" />
-                <circle cx="100" cy="44" r="49" fill="black" />
-                <circle cx="100" cy="100" r="41" fill="black" />
-              </mask>
-
-              <mask id="bio-ring-cutout">
-                <rect x="0" y="0" width="200" height="200" fill="white" />
-                <rect x="96" y="25" width="8" height="150" fill="black" transform="rotate(0 100 100)" />
-                <rect x="96" y="25" width="8" height="150" fill="black" transform="rotate(120 100 100)" />
-                <rect x="96" y="25" width="8" height="150" fill="black" transform="rotate(240 100 100)" />
-                <circle cx="100" cy="100" r="41" fill="black" />
-              </mask>
-
-              <mask id="bio-hub-cutout">
-                <rect x="0" y="0" width="200" height="200" fill="white" />
-                <circle cx="100" cy="100" r="11" fill="black" />
-                <rect x="97" y="70" width="6" height="60" fill="black" transform="rotate(0 100 100)" />
-                <rect x="97" y="70" width="6" height="60" fill="black" transform="rotate(120 100 100)" />
-                <rect x="97" y="70" width="6" height="60" fill="black" transform="rotate(240 100 100)" />
-              </mask>
-
-              <!-- Single Leaf Crescent Component in Site Yellow/Amber Theme -->
-              <g id="bio-leaf">
-                <circle cx="100" cy="72" r="51.5" fill="#facc15" mask="url(#bio-leaf-cutout)" />
-              </g>
-            </defs>
-
-            <!-- Rotatable Biohazard Blades Group -->
-            <g id="bladesGroup" class="transition-transform duration-700 origin-center" style="transform-origin: 100px 100px;">
-              <!-- Outer Extending Radial Spikes and Lines -->
-              <g stroke="#facc15" stroke-linecap="round">
-                <!-- Extended Spikes stretching outwards at 0, 120, 240 deg -->
-                <line x1="100" y1="20" x2="100" y2="2" stroke-width="3" />
-                <line x1="100" y1="20" x2="100" y2="2" stroke-width="3" transform="rotate(120 100 100)" />
-                <line x1="100" y1="20" x2="100" y2="2" stroke-width="3" transform="rotate(240 100 100)" />
-
-                <!-- Extended Outer Arcs extending outward -->
-                <line x1="100" y1="5" x2="88" y2="5" stroke-width="2.5" />
-                <line x1="100" y1="5" x2="112" y2="5" stroke-width="2.5" />
-                <g transform="rotate(120 100 100)">
-                  <line x1="100" y1="5" x2="88" y2="5" stroke-width="2.5" />
-                  <line x1="100" y1="5" x2="112" y2="5" stroke-width="2.5" />
-                </g>
-                <g transform="rotate(240 100 100)">
-                  <line x1="100" y1="5" x2="88" y2="5" stroke-width="2.5" />
-                  <line x1="100" y1="5" x2="112" y2="5" stroke-width="2.5" />
-                </g>
-
-                <!-- Additional Radial Accent Lines radiating outwards -->
-                <line x1="100" y1="42" x2="100" y2="10" stroke-width="2.5" transform="rotate(60 100 100)" stroke-dasharray="3,3" />
-                <line x1="100" y1="42" x2="100" y2="10" stroke-width="2.5" transform="rotate(180 100 100)" stroke-dasharray="3,3" />
-                <line x1="100" y1="42" x2="100" y2="10" stroke-width="2.5" transform="rotate(300 100 100)" stroke-dasharray="3,3" />
-              </g>
-
-              <!-- Extended Outer Dashed Ring Radius -->
-              <circle cx="100" cy="100" r="95" fill="none" stroke="#facc15" stroke-width="1.5" stroke-dasharray="4,8" opacity="0.75" />
-
-              <!-- Interlocking Ring -->
-              <circle cx="100" cy="100" r="47.5" fill="none" stroke="#facc15" stroke-width="11" mask="url(#bio-ring-cutout)" />
-
-              <!-- 3 Symmetric Blades rotated at 0, 120, 240 degrees -->
-              <use href="#bio-leaf" />
-              <use href="#bio-leaf" transform="rotate(120 100 100)" />
-              <use href="#bio-leaf" transform="rotate(240 100 100)" />
-
-              <!-- Center Connected Hub with Center Hole & Radial Slits -->
-              <circle cx="100" cy="100" r="24" fill="#facc15" mask="url(#bio-hub-cutout)" />
-            </g>
-          </svg>
-        </div>
-      </div>
-
       <!-- VIEW 1: QUESTION & INPUT STAGE -->
-      <div id="lockInputStage" class="space-y-6 transition-all duration-300">
+      <div id="lockInputStage" class="space-y-6 transition-all duration-300 mt-2">
         
-        <!-- Centered Question Box -->
-        <div class="bg-slate-950/95 rounded-2xl p-6 border border-yellow-500/50 shadow-inner relative text-center">
-          <div class="inline-flex items-center space-x-2 text-yellow-400 text-xs font-mono font-bold tracking-widest uppercase mb-2">
+        <!-- Question & Options Box (Replaces Central Symbol) -->
+        <div class="bg-slate-950/95 rounded-2xl p-5 sm:p-6 border-2 border-yellow-500/60 shadow-2xl relative text-left">
+          <div class="flex items-center space-x-2 text-yellow-400 text-xs font-mono font-bold tracking-widest uppercase mb-3 justify-center sm:justify-start">
             <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
             <span>[ Q. BUNKER SECURITY DECONTAMINATION CHALLENGE ]</span>
           </div>
-          <p id="questionText" class="text-lg sm:text-xl font-bold text-white leading-relaxed font-impact">
-            치료제 조제번호를 입력하시오
-          </p>
+          
+          <h2 id="questionText" class="text-base sm:text-lg font-bold text-white leading-relaxed font-impact mb-4 text-center sm:text-left">
+            Q. 좀비 바이러스의 원인에 해당하는 항목 순서대로 번호 3개 고르시오.
+          </h2>
+
+          <!-- 8 Options List Grid -->
+          <div id="optionsGrid" class="grid grid-cols-2 gap-2 text-xs sm:text-sm font-mono font-bold">
+            <div class="bg-slate-900/90 border border-yellow-500/40 rounded-xl p-2.5 text-yellow-300 flex items-center space-x-2.5 hover:border-yellow-400 transition-colors">
+              <span class="bg-yellow-400 text-black w-6 h-6 rounded-lg font-black flex items-center justify-center shrink-0">1</span>
+              <span class="truncate">LETHARGY</span>
+            </div>
+            <div class="bg-slate-900/90 border border-yellow-500/40 rounded-xl p-2.5 text-yellow-300 flex items-center space-x-2.5 hover:border-yellow-400 transition-colors">
+              <span class="bg-yellow-400 text-black w-6 h-6 rounded-lg font-black flex items-center justify-center shrink-0">2</span>
+              <span class="truncate">STUPOR</span>
+            </div>
+            <div class="bg-slate-900/90 border border-yellow-500/40 rounded-xl p-2.5 text-yellow-300 flex items-center space-x-2.5 hover:border-yellow-400 transition-colors">
+              <span class="bg-yellow-400 text-black w-6 h-6 rounded-lg font-black flex items-center justify-center shrink-0">3</span>
+              <span class="truncate">BURNOUT</span>
+            </div>
+            <div class="bg-slate-900/90 border border-yellow-500/40 rounded-xl p-2.5 text-yellow-300 flex items-center space-x-2.5 hover:border-yellow-400 transition-colors">
+              <span class="bg-yellow-400 text-black w-6 h-6 rounded-lg font-black flex items-center justify-center shrink-0">4</span>
+              <span class="truncate">FATIGUE</span>
+            </div>
+            <div class="bg-slate-900/90 border border-yellow-500/40 rounded-xl p-2.5 text-yellow-300 flex items-center space-x-2.5 hover:border-yellow-400 transition-colors">
+              <span class="bg-yellow-400 text-black w-6 h-6 rounded-lg font-black flex items-center justify-center shrink-0">5</span>
+              <span class="truncate">HALLUCINATION</span>
+            </div>
+            <div class="bg-slate-900/90 border border-yellow-500/40 rounded-xl p-2.5 text-yellow-300 flex items-center space-x-2.5 hover:border-yellow-400 transition-colors">
+              <span class="bg-yellow-400 text-black w-6 h-6 rounded-lg font-black flex items-center justify-center shrink-0">6</span>
+              <span class="truncate">STRESS</span>
+            </div>
+            <div class="bg-slate-900/90 border border-yellow-500/40 rounded-xl p-2.5 text-yellow-300 flex items-center space-x-2.5 hover:border-yellow-400 transition-colors">
+              <span class="bg-yellow-400 text-black w-6 h-6 rounded-lg font-black flex items-center justify-center shrink-0">7</span>
+              <span class="truncate">PANIC</span>
+            </div>
+            <div class="bg-slate-900/90 border border-yellow-500/40 rounded-xl p-2.5 text-yellow-300 flex items-center space-x-2.5 hover:border-yellow-400 transition-colors">
+              <span class="bg-yellow-400 text-black w-6 h-6 rounded-lg font-black flex items-center justify-center shrink-0">8</span>
+              <span class="truncate">ANXIETY</span>
+            </div>
+          </div>
         </div>
 
         <!-- Hint Section -->
@@ -544,7 +499,7 @@
     const DEFAULT_PUZZLE = {
       id: 'p1',
       stage: 'PRIMARY MISSION',
-      question: '치료제 조제번호를 입력하시오',
+      question: 'Q. 좀비 바이러스의 원인에 해당하는 항목 순서대로 번호 3개 고르시오.',
       answer: '367',
       hint: '3자리 숫자입니다.',
       secretPayload: '☣️ [벙커 격리구역 방역 오버라이드 승인 완료]\n\n치료제 조제번호(367) 인가가 성공적으로 등록되었습니다!\n벙커 환기 유닛이 가동되고 지상 에어락 차단벽이 열렸습니다.\n\n아래의 [영상 시청하기] 링크를 클릭하여 탈출 안내 영상을 시청하고 지정된 지상 소독 구역으로 탈출하십시오.',
