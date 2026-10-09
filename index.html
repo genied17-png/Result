@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ko" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bunker Escape Protocol - 벙커 방역 탈출 터미널</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Canvas Confetti for Celebration Effect -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Black+Han+Sans&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+            impact: ['Black Han Sans', 'sans-serif'],
+          },
+          animation: {
+            'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both',
+            'hazard-pulse': 'hazardPulse 1.5s infinite alternate',
+            'marquee': 'marquee 18s linear infinite',
+            'scan-line': 'scanLine 3s linear infinite',
+            'spin-slow': 'spin 12s linear infinite',
+          },
+          keyframes: {
+            shake: {
+              '10%, 90%': { transform: 'translate3d(-3px, 0, 0)' },
+              '20%, 80%': { transform: 'translate3d(5px, 0, 0)' },
+              '30%, 50%, 70%': { transform: 'translate3d(-7px, 0, 0)' },
+              '40%, 60%': { transform: 'translate3d(7px, 0, 0)' }
+            },
+            hazardPulse: {
+              '0%': { boxShadow: '0 0 15px rgba(234, 179, 8, 0.2), inset 0 0 15px rgba(234, 179, 8, 0.1)' },
+              '100%': { boxShadow: '0 0 35px rgba(234, 179, 8, 0.6), inset 0 0 25px rgba(234, 179, 8, 0.25)' }
+            },
+            marquee: {
+              '0%': { transform: 'translateX(0%)' },
+              '100%': { transform: 'translateX(-50%)' }
+            },
+            scanLine: {
+              '0%': { top: '-5%' },
+              '100%': { top: '105%' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Dark Hazmat Cyber Grid Background */
+    .bg-hazmat-grid {
+      background-color: #05070a;
+      background-image: 
+        linear-gradient(to right, rgba(234, 179, 8, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(234, 179, 8, 0.07) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* High Visibility Yellow/Black Hazard Stripes Tape */
+    .hazard-stripe-yellow {
+      background: repeating-linear-gradient(
+        -45deg,
+        #facc15,
+        #facc15 15px,
+        #090d16 15px,
+        #090d16 30px
+      );
+    }
+
+    /* Red Warning Hazard Stripes */
+    .hazard-stripe-red {
+      background: repeating-linear-gradient(
+        -45deg,
+        #ef4444,
+        #ef4444 15px,
+        #090d16 15px,
+        #090d16 30px
+      );
+    }
+
+    /* Warning Neon Card Border */
+    .warning-border {
+      border: 2px solid #facc15;
+      box-shadow: 0 0 25px rgba(250, 204, 21, 0.25), inset 0 0 15px rgba(250, 204, 21, 0.05);
+    }
+
+    .warning-border-emerald {
+      border: 2px solid #10b981;
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.35), inset 0 0 20px rgba(16, 185, 129, 0.08);
+    }
+
+    /* Scanline Laser Effect Overlay */
+    .laser-scanline {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #facc15, #ef4444, #facc15, transparent);
+      box-shadow: 0 0 15px #facc15;
+      animation: scanLine 3s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    .glass-hazmat {
+      background: rgba(10, 14, 23, 0.92);
+      backdrop-filter: blur(16px);
+    }
+  </style>
+</head>
+
+<body class="bg-hazmat-grid text-slate-100 min-h-screen flex flex-col font-sans selection:bg-yellow-400 selection:text-black antialiased">
+
+  <!-- Top Infinite Scrolling Hazard Marquee Bar -->
+  <div class="w-full bg-yellow-400 text-black overflow-hidden whitespace-nowrap font-mono font-black text-xs py-1 border-b-2 border-black flex items-center z-30 select-none shadow-lg">
+    <div class="animate-marquee flex space-x-6 items-center">
+      <span>⚠️ DANGER: HIGH CONTAMINATION ZONE</span><span>•</span>
+      <span>BIO-SAFETY LEVEL 4 AIRLOCK LOCKDOWN</span><span>•</span>
+      <span>방역 수동 오버라이드 절차 진행 중</span><span>•</span>
+      <span>AUTHORIZED HAZMAT PERSONNEL ONLY</span><span>•</span>
+      <span>⚠️ WARNING: DECONTAMINATION REQUIRED</span><span>•</span>
+      <span>BIO-SAFETY LEVEL 4 AIRLOCK LOCKDOWN</span><span>•</span>
+      <span>방역 수동 오버라이드 절차 진행 중</span><span>•</span>
+      <span>AUTHORIZED HAZMAT PERSONNEL ONLY</span><span>•</span>
+    </div>
+  </div>
+
+  <!-- Header Navigation & Status -->
+  <header class="w-full max-w-4xl mx-auto px-4 pt-5 pb-2 flex flex-col sm:flex-row justify-between items-center gap-3 z-20 text-center sm:text-left">
+    <div class="flex items-center space-x-3">
+      <div class="w-11 h-11 rounded-2xl bg-yellow-400 text-black flex items-center justify-center font-bold shadow-lg shadow-yellow-500/20 border-2 border-yellow-300 flex-shrink-0">
+        <!-- Hazmat Respirator Icon -->
+        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12c0 3.03 1.35 5.74 3.48 7.58L4 22h16l-1.48-2.42C20.65 17.74 22 15.03 22 12c0-5.52-4.48-10-10-10zm0 14c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center justify-center sm:justify-start space-x-2">
+          <h1 class="text-xl sm:text-2xl font-black tracking-wider text-yellow-400 font-impact uppercase">BUNKER ESCAPE PROTOCOL</h1>
+          <span class="px-2 py-0.5 text-[10px] font-mono font-extrabold bg-red-600 text-white rounded border border-red-400">HAZMAT v3.0</span>
+        </div>
+        <p class="text-xs text-yellow-100/70 font-mono">벙커 비상 방역 해독 및 차단벽 오버라이드 콘솔</p>
+      </div>
+    </div>
+
+    <!-- Header Control Action Buttons -->
+    <div class="flex items-center space-x-2">
+      <button id="soundToggleBtn" class="p-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-yellow-400 border border-yellow-500/40 transition-all shadow-md flex items-center space-x-1" title="효과음 켜기/끄기">
+        <svg id="soundOnIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+        </svg>
+        <svg id="soundOffIcon" class="w-5 h-5 hidden text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>
+        </svg>
+      </button>
+
+      <button id="openCustomizerBtn" class="px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold bg-yellow-400 hover:bg-yellow-300 text-black border border-yellow-500 flex items-center space-x-1.5 transition-all shadow-md">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+        </svg>
+        <span>[질문/정답 편집]</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Application Workspace -->
+  <main class="flex-1 w-full max-w-3xl mx-auto px-4 py-4 flex flex-col justify-center items-center relative z-10">
+
+    <!-- Status Badges Bar -->
+    <div class="w-full flex items-center justify-center gap-2 mb-4 text-center">
+      <span class="px-3.5 py-1 rounded-md text-xs font-mono font-extrabold bg-red-950 text-red-400 border border-red-700/80 uppercase tracking-wider animate-pulse" id="levelBadge">PRIMARY MISSION</span>
+      <span class="text-xs text-slate-400 font-mono" id="stageProgressText">단일 방역 오버라이드 챌린지</span>
+    </div>
+
+    <!-- Main Hazard Lock Card -->
+    <div id="mainLockCard" class="w-full glass-hazmat rounded-3xl p-6 sm:p-10 shadow-2xl transition-all duration-500 relative overflow-hidden warning-border text-center">
+      
+      <!-- Top Warning Stripes Banner -->
+      <div class="absolute top-0 left-0 right-0 h-3 hazard-stripe-yellow"></div>
+      
+      <!-- Laser Scanning Visual Overlay -->
+      <div class="laser-scanline"></div>
+
+      <!-- Centered Hazardous Waste Symbol (유해폐기물질 기호) -->
+      <div class="flex justify-center my-4">
+        <div id="lockIconWrapper" class="relative group cursor-pointer p-6 sm:p-8 rounded-3xl border-2 border-yellow-500/60 bg-slate-950/95 shadow-2xl shadow-yellow-950/60 transition-all duration-500 flex flex-col items-center">
+          <div class="absolute inset-0 bg-yellow-500/10 rounded-3xl blur-xl group-hover:bg-yellow-500/25 transition-all"></div>
+          
+          <!-- Extended Yellow/Amber Biohazard Symbol with Outward Radiating Lines -->
+          <svg id="biohazardSvg" class="w-36 h-36 sm:w-44 sm:h-44 relative z-10 transition-all duration-700 drop-shadow-[0_0_25px_rgba(250,204,21,0.85)]" viewBox="0 0 200 200">
+            <defs>
+              <!-- Precision Cutout Masks for Hollow Inner Spaces -->
+              <mask id="bio-leaf-cutout">
+                <rect x="0" y="0" width="200" height="200" fill="white" />
+                <circle cx="100" cy="44" r="49" fill="black" />
+                <circle cx="100" cy="100" r="41" fill="black" />
+              </mask>
+
+              <mask id="bio-ring-cutout">
+                <rect x="0" y="0" width="200" height="200" fill="white" />
+                <rect x="96" y="25" width="8" height="150" fill="black" transform="rotate(0 100 100)" />
+                <rect x="96" y="25" width="8" height="150" fill="black" transform="rotate(120 100 100)" />
+                <rect x="96" y="25" width="8" height="150" fill="black" transform="rotate(240 100 100)" />
+                <circle cx="100" cy="100" r="41" fill="black" />
+              </mask>
+
+              <mask id="bio-hub-cutout">
+                <rect x="0" y="0" width="200" height="200" fill="white" />
+                <circle cx="100" cy="100" r="11" fill="black" />
+                <rect x="97" y="70" width="6" height="60" fill="black" transform="rotate(0 100 100)" />
+                <rect x="97" y="70" width="6" height="60" fill="black" transform="rotate(120 100 100)" />
+                <rect x="97" y="70" width="6" height="60" fill="black" transform="rotate(240 100 100)" />
+              </mask>
+
+              <!-- Single Leaf Crescent Component in Site Yellow/Amber Theme -->
+              <g id="bio-leaf">
+                <circle cx="100" cy="72" r="51.5" fill="#facc15" mask="url(#bio-leaf-cutout)" />
+              </g>
+            </defs>
+
+            <!-- Rotatable Biohazard Blades Group -->
+            <g id="bladesGroup" class="transition-transform duration-700 origin-center" style="transform-origin: 100px 100px;">
+              <!-- Outer Extending Radial Spikes and Lines -->
+              <g stroke="#facc15" stroke-linecap="round">
+                <!-- Extended Spikes stretching outwards at 0, 120, 240 deg -->
+                <line x1="100" y1="20" x2="100" y2="2" stroke-width="3" />
+                <line x1="100" y1="20" x2="100" y2="2" stroke-width="3" transform="rotate(120 100 100)" />
+                <line x1="100" y1="20" x2="100" y2="2" stroke-width="3" transform="rotate(240 100 100)" />
+
+                <!-- Extended Outer Arcs extending outward -->
+                <line x1="100" y1="5" x2="88" y2="5" stroke-width="2.5" />
+                <line x1="100" y1="5" x2="112" y2="5" stroke-width="2.5" />
+                <g transform="rotate(120 100 100)">
+                  <line x1="100" y1="5" x2="88" y2="5" stroke-width="2.5" />
+                  <line x1="100" y1="5" x2="112" y2="5" stroke-width="2.5" />
+                </g>
+                <g transform="rotate(240 100 100)">
+                  <line x1="100" y1="5" x2="88" y2="5" stroke-width="2.5" />
+                  <line x1="100" y1="5" x2="112" y2="5" stroke-width="2.5" />
+                </g>
+
+                <!-- Additional Radial Accent Lines radiating outwards -->
+                <line x1="100" y1="42" x2="100" y2="10" stroke-width="2.5" transform="rotate(60 100 100)" stroke-dasharray="3,3" />
+                <line x1="100" y1="42" x2="100" y2="10" stroke-width="2.5" transform="rotate(180 100 100)" stroke-dasharray="3,3" />
+                <line x1="100" y1="42" x2="100" y2="10" stroke-width="2.5" transform="rotate(300 100 100)" stroke-dasharray="3,3" />
+              </g>
+
+              <!-- Extended Outer Dashed Ring Radius -->
+              <circle cx="100" cy="100" r="95" fill="none" stroke="#facc15" stroke-width="1.5" stroke-dasharray="4,8" opacity="0.75" />
+
+              <!-- Interlocking Ring -->
+              <circle cx="100" cy="100" r="47.5" fill="none" stroke="#facc15" stroke-width="11" mask="url(#bio-ring-cutout)" />
+
+              <!-- 3 Symmetric Blades rotated at 0, 120, 240 degrees -->
+              <use href="#bio-leaf" />
+              <use href="#bio-leaf" transform="rotate(120 100 100)" />
+              <use href="#bio-leaf" transform="rotate(240 100 100)" />
+
+              <!-- Center Connected Hub with Center Hole & Radial Slits -->
+              <circle cx="100" cy="100" r="24" fill="#facc15" mask="url(#bio-hub-cutout)" />
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- VIEW 1: QUESTION & INPUT STAGE -->
+      <div id="lockInputStage" class="space-y-6 transition-all duration-300">
+        
+        <!-- Centered Question Box -->
+        <div class="bg-slate-950/95 rounded-2xl p-6 border border-yellow-500/50 shadow-inner relative text-center">
+          <div class="inline-flex items-center space-x-2 text-yellow-400 text-xs font-mono font-bold tracking-widest uppercase mb-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+            <span>[ Q. BUNKER SECURITY DECONTAMINATION CHALLENGE ]</span>
+          </div>
+          <p id="questionText" class="text-lg sm:text-xl font-bold text-white leading-relaxed font-impact">
+            치료제 조제번호를 입력하시오
+          </p>
+        </div>
+
+        <!-- Hint Section -->
+        <div id="hintContainer" class="hidden text-center">
+          <div class="p-3.5 bg-yellow-500/10 border border-yellow-500/40 rounded-xl inline-block text-xs text-yellow-200 text-center max-w-md">
+            <span class="font-bold text-yellow-400">💡 SECURITY HINT: </span>
+            <span id="hintText"></span>
+          </div>
+        </div>
+
+        <!-- Answer Input Form -->
+        <form id="answerForm" onsubmit="handleAnswerSubmit(event)" class="space-y-4 max-w-md mx-auto text-center">
+          <div class="text-center">
+            <div class="flex justify-between items-center mb-2 px-1 text-xs font-mono">
+              <label for="answerInput" class="font-bold text-yellow-400 uppercase tracking-wider text-center w-full">
+                &gt; A. 암호 입력 (ENTER DECRYPTION KEY)
+              </label>
+            </div>
+            
+            <div class="relative">
+              <input 
+                type="text" 
+                id="answerInput" 
+                placeholder="정답 입력" 
+                autocomplete="off" 
+                spellcheck="false"
+                class="w-full bg-slate-950 border-2 border-yellow-500/60 rounded-xl px-4 py-3.5 text-center text-yellow-300 placeholder-slate-600 focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-400/20 font-mono text-lg uppercase tracking-widest font-extrabold transition-all"
+              />
+            </div>
+
+            <div class="mt-2 text-center">
+              <button type="button" id="toggleHintBtn" class="text-xs text-yellow-400 hover:text-yellow-300 underline font-mono">
+                [힌트 보기]
+              </button>
+            </div>
+          </div>
+
+          <!-- Real-Time SHA-256 Cipher Preview -->
+          <div class="bg-slate-950/90 rounded-xl p-3 border border-slate-800 font-mono text-center space-y-1">
+            <div class="flex justify-between text-[11px] text-slate-400 px-1">
+              <span>REAL-TIME SHA-256 HASH:</span>
+              <span id="hashEntropyScore" class="text-yellow-400 font-bold">LENGTH: 0</span>
+            </div>
+            <div id="liveHashDisplay" class="text-[10px] text-yellow-400/80 break-all bg-slate-900 p-2 rounded border border-slate-800 select-all font-mono text-center">
+              e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+            </div>
+          </div>
+
+          <!-- Error Feedback Banner -->
+          <div id="errorMessage" class="hidden text-xs text-red-400 bg-red-950/80 border border-red-600 rounded-xl p-3 text-center font-mono">
+            <span id="errorText">Access Denied: 정답이 아닙니다. 다시 시도해 주세요.</span>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            id="submitBtn"
+            class="w-full bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-400 text-black font-impact font-black text-base py-3.5 px-6 rounded-xl shadow-lg shadow-yellow-500/30 hover:shadow-yellow-400/50 active:scale-[0.99] transition-all uppercase tracking-wider flex items-center justify-center space-x-2"
+          >
+            <span>[ AUTHENTICATE & OVERRIDE DECONTAMINATION ]</span>
+          </button>
+        </form>
+
+        <!-- Live Audit Terminal Log Stream -->
+        <div class="mt-6 pt-4 border-t border-slate-800 text-center">
+          <div class="text-[11px] font-mono text-slate-400 mb-2 uppercase tracking-wider">
+            [ LIVE HAZMAT SECURITY LOG AUDIT ]
+          </div>
+          <div id="terminalLogBox" class="h-20 bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-400 overflow-y-auto space-y-1 text-center">
+            <div><span class="text-yellow-400">[SYSTEM]</span> Decontamination Override Vault Ready.</div>
+            <div><span class="text-red-400">[ALERT]</span> Contamination Level Critical (87.4%). Air Lock Sealed.</div>
+            <div><span class="text-emerald-400">[INPUT]</span> Waiting for antidote authorization key...</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- VIEW 2: SOLVED & UNLOCKED PAGE -->
+      <div id="solvedStage" class="hidden text-center space-y-6 animate-fade-in">
+        
+        <div class="inline-flex items-center justify-center p-4 bg-emerald-500/20 rounded-full border border-emerald-500 text-emerald-400 mb-1">
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+
+        <div class="space-y-2">
+          <div class="inline-block px-4 py-1 rounded-full bg-emerald-950 text-emerald-400 text-xs font-mono font-bold border border-emerald-700 mb-1">
+            HAZMAT OVERRIDE CLEARED • LEVEL 5 PERMIT
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-impact text-center">
+            SYSTEM UNLOCKED!
+          </h2>
+          <p class="text-base text-slate-200 font-medium text-center">
+            정답 <span id="solvedAnswerWord" class="font-mono font-extrabold text-emerald-400 underline decoration-emerald-500/50"></span> (이)가 정확히 일치합니다!
+          </p>
+        </div>
+
+        <!-- Success & Video Payload Box -->
+        <div class="bg-slate-950/90 rounded-2xl p-6 border border-emerald-500/50 text-center space-y-4 shadow-xl max-w-lg mx-auto">
+          <div class="text-xs font-bold text-emerald-400 uppercase tracking-widest font-mono">
+            [ DECONTAMINATION SUCCESSFUL & AIRLOCK OPENED ]
+          </div>
+
+          <div id="solvedSecretPayloadText" class="text-xs text-slate-300 leading-relaxed font-sans whitespace-pre-line text-center">
+            <!-- Secret message text -->
+          </div>
+
+          <!-- Direct Video Button & Link Container -->
+          <div id="solvedVideoBox" class="space-y-3 pt-2">
+            <div>
+              <a id="solvedVideoBtnLink" href="#" target="_blank" rel="noopener noreferrer" 
+                 class="inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-impact font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-emerald-600/40 hover:shadow-emerald-500/60 transition-all text-sm uppercase">
+                <span>[ 🎬 영상 시청하기 ]</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </a>
+            </div>
+
+            <div class="text-[11px] font-mono text-emerald-400/90 break-all bg-slate-900 p-2.5 rounded-xl border border-slate-800 select-all flex items-center justify-center space-x-2">
+              <span>🔗</span>
+              <a id="solvedVideoTextLink" href="#" target="_blank" rel="noopener noreferrer" class="underline hover:text-emerald-300">
+                <!-- Video URL inserted via JS -->
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="pt-2 flex justify-center font-mono">
+          <button 
+            id="relockBtn"
+            class="px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 font-bold transition-all text-sm uppercase"
+          >
+            🔒 다시 잠그기
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Bottom Hazard Stripe Accent -->
+      <div class="absolute bottom-0 left-0 right-0 h-3 hazard-stripe-yellow"></div>
+    </div>
+
+    <!-- Footer Security Marker -->
+    <div class="mt-6 text-center text-xs text-slate-500 font-mono">
+      <p>Bunker Decontamination Protocol • SHA-256 Verified Security System</p>
+    </div>
+  </main>
+
+  <!-- Custom Question/Answer Modal -->
+  <div id="customizerModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="glass-hazmat w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-yellow-500/80 transform scale-95 transition-transform duration-300 text-center" id="modalCard">
+      
+      <div class="flex justify-between items-center mb-6 border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-2">
+          <span class="w-3 h-3 rounded-full bg-yellow-400 animate-pulse"></span>
+          <h2 class="text-lg font-black text-white font-impact">질문 및 정답 설정</h2>
+        </div>
+        <button id="closeModalBtn" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <form id="customizerForm" class="space-y-4 text-left">
+        <div>
+          <label class="block text-xs font-bold text-yellow-400 uppercase tracking-wider mb-1">
+            Q. 질문 문구 (Question)
+          </label>
+          <textarea 
+            id="customQuestionInput" 
+            rows="2" 
+            required 
+            placeholder="예: 치료제 조제번호를 입력하시오"
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-yellow-400"
+          ></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-yellow-400 uppercase tracking-wider mb-1">
+            A. 정답 (Answer Key)
+          </label>
+          <input 
+            type="text" 
+            id="customAnswerInput" 
+            required 
+            placeholder="예: 367" 
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm font-mono text-yellow-300 uppercase placeholder-slate-500 focus:outline-none focus:border-yellow-400"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+            힌트 내용 (선택 사항)
+          </label>
+          <input 
+            type="text" 
+            id="customHintInput" 
+            placeholder="예: 3자리 숫자입니다." 
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-yellow-400"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+            보상 메시지 (Secret Content)
+          </label>
+          <textarea 
+            id="customSecretInput" 
+            rows="3" 
+            required 
+            placeholder="정답을 맞춘 후 보여줄 특별 보상 문구를 입력하세요."
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-yellow-400"
+          ></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+            🎬 비밀 영상 URL (YouTube / MP4 링크)
+          </label>
+          <input 
+            type="text" 
+            id="customVideoInput" 
+            placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm font-mono text-slate-100 placeholder-slate-500 focus:outline-none focus:border-yellow-400"
+          />
+        </div>
+
+        <div class="pt-3 flex gap-3">
+          <button 
+            type="submit" 
+            class="flex-1 bg-yellow-400 hover:bg-yellow-300 text-black font-impact font-bold py-3 rounded-xl transition-all shadow-lg shadow-yellow-500/30 uppercase"
+          >
+            설정 저장 및 적용
+          </button>
+          <button 
+            type="button" 
+            id="resetPresetBtn"
+            class="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-all"
+          >
+            기본값 초기화
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <script>
+    // Single Default Mission Puzzle Configuration
+    const DEFAULT_PUZZLE = {
+      id: 'p1',
+      stage: 'PRIMARY MISSION',
+      question: '치료제 조제번호를 입력하시오',
+      answer: '367',
+      hint: '3자리 숫자입니다.',
+      secretPayload: '☣️ [벙커 격리구역 방역 오버라이드 승인 완료]\n\n치료제 조제번호(367) 인가가 성공적으로 등록되었습니다!\n벙커 환기 유닛이 가동되고 지상 에어락 차단벽이 열렸습니다.\n\n아래의 [영상 시청하기] 링크를 클릭하여 탈출 안내 영상을 시청하고 지정된 지상 소독 구역으로 탈출하십시오.',
+      secretVideo: 'https://www.youtube.com/watch?v=SeJf5wBzu1o&list=PLcAfHqp2wYmg',
+      secretLink: ''
+    };
+
+    // State Variables
+    let currentPuzzle = { ...DEFAULT_PUZZLE };
+    let isSoundMuted = false;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (isSoundMuted) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        if (type === 'click') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, now);
+          osc.frequency.exponentialRampToValueAtTime(250, now + 0.04);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.04);
+        } else if (type === 'error') {
+          const osc1 = ctx.createOscillator();
+          const osc2 = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc1.type = 'sawtooth';
+          osc2.type = 'sawtooth';
+          osc1.frequency.setValueAtTime(180, now);
+          osc2.frequency.setValueAtTime(130, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc1.connect(gain);
+          osc2.connect(gain);
+          gain.connect(ctx.destination);
+          osc1.start(now);
+          osc2.start(now);
+          osc1.stop(now + 0.3);
+          osc2.stop(now + 0.3);
+        } else if (type === 'unlock') {
+          const freqs = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+          freqs.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+            gain.gain.setValueAtTime(0.2, now + idx * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.45);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.06);
+            osc.stop(now + idx * 0.06 + 0.45);
+          });
+        }
+      } catch (e) {
+        console.warn('Audio playback pending interaction', e);
+      }
+    }
+
+    // Video Embed Helper (YouTube or direct MP4)
+    function getEmbedVideoHtml(url) {
+      if (!url) return '';
+      const ytReg = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([^"&?\/\s]{11})/;
+      const match = url.match(ytReg);
+      if (match && match[1]) {
+        return `<div class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border-2 border-emerald-500 bg-black">
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/${match[1]}?autoplay=1&rel=0" title="Decontamination Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>`;
+      }
+      if (url.match(/\.(mp4|webm|ogg)($|\?)/i)) {
+        return `<div class="relative w-full rounded-2xl overflow-hidden shadow-2xl border-2 border-emerald-500 bg-black">
+          <video controls autoplay class="w-full max-h-[380px]">
+            <source src="${url}">
+            비디오 재생을 지원하지 않는 브라우저입니다.
+          </video>
+        </div>`;
+      }
+      return '';
+    }
+
+    // SHA-256 Hash Computation Display
+    async function updateLiveHashDisplay(text) {
+      const displayEl = document.getElementById('liveHashDisplay');
+      const scoreEl = document.getElementById('hashEntropyScore');
+      if (!displayEl) return;
+
+      scoreEl.textContent = `LENGTH: ${text.length}`;
+      if (!text) {
+        displayEl.textContent = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+        return;
+      }
+      try {
+        const msgUint8 = new TextEncoder().encode(text.toUpperCase());
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        displayEl.textContent = hashHex;
+      } catch (err) {
+        displayEl.textContent = 'HASH_ERROR';
+      }
+    }
+
+    // Terminal Audit Logger
+    function logTerminalMessage(tag, text, type = 'normal') {
+      const logBox = document.getElementById('terminalLogBox');
+      if (!logBox) return;
+      const timeStr = new Date().toTimeString().split(' ')[0];
+      const div = document.createElement('div');
+      let tagColor = 'text-yellow-400';
+      if (type === 'error') tagColor = 'text-red-400';
+      if (type === 'success') tagColor = 'text-emerald-400';
+
+      div.innerHTML = `<span class="${tagColor}">[${timeStr} ${tag}]</span> ${text}`;
+      logBox.appendChild(div);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    const levelBadge = document.getElementById('levelBadge');
+    const stageProgressText = document.getElementById('stageProgressText');
+    const questionText = document.getElementById('questionText');
+    const answerInput = document.getElementById('answerInput');
+    const answerForm = document.getElementById('answerForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+    const mainLockCard = document.getElementById('mainLockCard');
+    const hintContainer = document.getElementById('hintContainer');
+    const hintText = document.getElementById('hintText');
+    const toggleHintBtn = document.getElementById('toggleHintBtn');
+
+    const lockInputStage = document.getElementById('lockInputStage');
+    const solvedStage = document.getElementById('solvedStage');
+    const solvedAnswerWord = document.getElementById('solvedAnswerWord');
+    const solvedSecretPayloadText = document.getElementById('solvedSecretPayloadText');
+    const solvedVideoBox = document.getElementById('solvedVideoBox');
+    const solvedVideoBtnLink = document.getElementById('solvedVideoBtnLink');
+    const solvedVideoTextLink = document.getElementById('solvedVideoTextLink');
+
+    const relockBtn = document.getElementById('relockBtn');
+
+    function initPuzzle() {
+      const saved = localStorage.getItem('bunker_escape_single_puzzle');
+      if (saved) {
+        try { currentPuzzle = JSON.parse(saved); } catch (e) { currentPuzzle = { ...DEFAULT_PUZZLE }; }
+      } else {
+        currentPuzzle = { ...DEFAULT_PUZZLE };
+      }
+      renderPuzzle();
+    }
+
+    function renderPuzzle() {
+      questionText.textContent = currentPuzzle.question;
+      answerInput.value = '';
+      updateLiveHashDisplay('');
+      hideError();
+      hideHint();
+
+      if (currentPuzzle.hint) {
+        hintText.textContent = currentPuzzle.hint;
+        toggleHintBtn.classList.remove('hidden');
+      } else {
+        toggleHintBtn.classList.add('hidden');
+      }
+
+      lockBiohazardVisual();
+      showStage('input');
+      logTerminalMessage('STAGE', `Single Decontamination Challenge Active.`);
+    }
+
+    function lockBiohazardVisual() {
+      mainLockCard.classList.remove('warning-border-emerald');
+      mainLockCard.classList.add('warning-border');
+      const bladesGroup = document.getElementById('bladesGroup');
+      if (bladesGroup) bladesGroup.style.transform = 'rotate(0deg)';
+    }
+
+    function unlockBiohazardVisual() {
+      mainLockCard.classList.remove('warning-border');
+      mainLockCard.classList.add('warning-border-emerald');
+      const bladesGroup = document.getElementById('bladesGroup');
+      if (bladesGroup) bladesGroup.style.transform = 'rotate(180deg)';
+    }
+
+    function showStage(stageName) {
+      lockInputStage.classList.add('hidden');
+      solvedStage.classList.add('hidden');
+
+      if (stageName === 'input') lockInputStage.classList.remove('hidden');
+      else if (stageName === 'solved') solvedStage.classList.remove('hidden');
+    }
+
+    function showError(msg) {
+      errorText.textContent = msg;
+      errorMessage.classList.remove('hidden');
+    }
+
+    function hideError() {
+      errorMessage.classList.add('hidden');
+    }
+
+    function hideHint() {
+      hintContainer.classList.add('hidden');
+    }
+
+    function toggleHint() {
+      hintContainer.classList.toggle('hidden');
+    }
+
+    async function handleAnswerSubmit(e) {
+      if (e) e.preventDefault();
+      playSound('click');
+
+      const userVal = answerInput.value.trim().toUpperCase();
+
+      if (!userVal) {
+        showError('Access Denied: 암호를 입력해 주세요.');
+        playSound('error');
+        return;
+      }
+
+      if (userVal === currentPuzzle.answer.trim().toUpperCase()) {
+        hideError();
+        unlockBiohazardVisual();
+        playSound('unlock');
+        logTerminalMessage('AUTH_SUCCESS', `Decryption key [${userVal}] matched! Airlock opened.`, 'success');
+
+        solvedAnswerWord.textContent = currentPuzzle.answer;
+        solvedSecretPayloadText.textContent = currentPuzzle.secretPayload || '';
+
+        if (currentPuzzle.secretVideo) {
+          solvedVideoBtnLink.href = currentPuzzle.secretVideo;
+          solvedVideoTextLink.href = currentPuzzle.secretVideo;
+          solvedVideoTextLink.textContent = currentPuzzle.secretVideo;
+          solvedVideoBox.classList.remove('hidden');
+        } else {
+          solvedVideoBox.classList.add('hidden');
+        }
+
+        showStage('solved');
+      } else {
+        showError(`Access Denied: 잘못된 인증키 [${userVal}] 입니다. 다시 시도하십시오.`);
+        playSound('error');
+        logTerminalMessage('AUTH_FAIL', `Invalid key [${userVal}] attempt recorded.`, 'error');
+
+        mainLockCard.classList.remove('animate-shake');
+        void mainLockCard.offsetWidth;
+        mainLockCard.classList.add('animate-shake');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initPuzzle();
+
+      if (answerInput) {
+        answerInput.addEventListener('input', (e) => {
+          updateLiveHashDisplay(e.target.value.trim());
+        });
+      }
+
+      const soundToggleBtn = document.getElementById('soundToggleBtn');
+      const soundOnIcon = document.getElementById('soundOnIcon');
+      const soundOffIcon = document.getElementById('soundOffIcon');
+      if (soundToggleBtn) {
+        soundToggleBtn.addEventListener('click', () => {
+          isSoundMuted = !isSoundMuted;
+          if (isSoundMuted) {
+            soundOnIcon.classList.add('hidden');
+            soundOffIcon.classList.remove('hidden');
+          } else {
+            soundOnIcon.classList.remove('hidden');
+            soundOffIcon.classList.add('hidden');
+            playSound('click');
+          }
+        });
+      }
+
+      if (toggleHintBtn) toggleHintBtn.addEventListener('click', toggleHint);
+
+      if (relockBtn) relockBtn.addEventListener('click', () => { playSound('click'); renderPuzzle(); });
+
+      // Customizer Modal Handlers
+      const customizerModal = document.getElementById('customizerModal');
+      const modalCard = document.getElementById('modalCard');
+      const openCustomizerBtn = document.getElementById('openCustomizerBtn');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const customizerForm = document.getElementById('customizerForm');
+      const resetPresetBtn = document.getElementById('resetPresetBtn');
+
+      function openModal() {
+        playSound('click');
+        document.getElementById('customQuestionInput').value = currentPuzzle.question || '';
+        document.getElementById('customAnswerInput').value = currentPuzzle.answer || '';
+        document.getElementById('customHintInput').value = currentPuzzle.hint || '';
+        document.getElementById('customSecretInput').value = currentPuzzle.secretPayload || '';
+        document.getElementById('customVideoInput').value = currentPuzzle.secretVideo || '';
+
+        customizerModal.classList.remove('opacity-0', 'pointer-events-none');
+        modalCard.classList.remove('scale-95');
+        modalCard.classList.add('scale-100');
+      }
+
+      function closeModal() {
+        playSound('click');
+        customizerModal.classList.add('opacity-0', 'pointer-events-none');
+        modalCard.classList.remove('scale-100');
+        modalCard.classList.add('scale-95');
+      }
+
+      if (openCustomizerBtn) openCustomizerBtn.addEventListener('click', openModal);
+      if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+
+      if (customizerForm) {
+        customizerForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          playSound('click');
+
+          const question = document.getElementById('customQuestionInput').value.trim();
+          const answer = document.getElementById('customAnswerInput').value.trim().toUpperCase();
+          const hint = document.getElementById('customHintInput').value.trim();
+          const secretPayload = document.getElementById('customSecretInput').value.trim();
+          const secretVideo = document.getElementById('customVideoInput').value.trim();
+
+          currentPuzzle = {
+            id: 'p1',
+            stage: 'PRIMARY MISSION',
+            question,
+            answer,
+            hint,
+            secretPayload,
+            secretVideo,
+            secretLink: ''
+          };
+
+          localStorage.setItem('bunker_escape_single_puzzle', JSON.stringify(currentPuzzle));
+          renderPuzzle();
+          closeModal();
+        });
+      }
+
+      if (resetPresetBtn) {
+        resetPresetBtn.addEventListener('click', () => {
+          playSound('click');
+          localStorage.removeItem('bunker_escape_single_puzzle');
+          currentPuzzle = { ...DEFAULT_PUZZLE };
+          renderPuzzle();
+          closeModal();
+        });
+      }
+    });
+  </script>
+</body>
+</html>
